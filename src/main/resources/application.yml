@@ -1,0 +1,39 @@
+spring:
+  redis:
+    cluster:
+      nodes:
+        - 127.0.0.1:6379
+        - 127.0.0.1:6380
+        - 127.0.0.1:6381
+        - 127.0.0.1:6382
+        - 127.0.0.1:6383
+        - 127.0.0.1:6384
+    password: JsNx@1601  # 如果你的Redis集群需要密码访问
+  #mysql
+  datasource:
+    url: jdbc:mysql://localhost:3306/ods_datas?useSSL=false&serverTimezone=UTC
+    username: ods1
+    password: 123456
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+  #Oracle
+#  datasource:
+#    url: jdbc:oracle:thin:@//<host>:<port>/<service_name>
+#    username: <your-username>
+#    password: <your-password>
+#    driver-class-name: oracle.jdbc.OracleDriver
+#
+#    jpa:
+#      hibernate:
+#        ddl-auto: update
+#      properties:
+#        hibernate:
+#          dialect: org.hibernate.dialect.Oracle12cDialect
+
+server:
+  port: 9001  # 配置Web端口
+

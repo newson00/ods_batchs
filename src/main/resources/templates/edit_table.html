@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Edit Table</title>
+  <script>
+    let columnIndex = 1000; // 用于追踪添加的列索引
+
+    function addColumn() {
+      var container = document.getElementById("columnsContainer");
+
+      var newColumnDiv = document.createElement("div");
+      newColumnDiv.setAttribute("id", "column_" + columnIndex);  // 为每个列设置唯一的ID
+
+      // Column Name Label and Input
+      var columnNameLabel = document.createElement("label");
+      columnNameLabel.setAttribute("for", "columnNames_" + columnIndex);
+      columnNameLabel.textContent = "Column Name:";
+      newColumnDiv.appendChild(columnNameLabel);
+
+      var columnNameInput = document.createElement("input");
+      columnNameInput.setAttribute("type", "text");
+      columnNameInput.setAttribute("name", "columnNames");
+      columnNameInput.setAttribute("id", "columnNames_" + columnIndex);
+      newColumnDiv.appendChild(columnNameInput);
+
+      // Column Type Label and Input
+      var columnTypeLabel = document.createElement("label");
+      columnTypeLabel.setAttribute("for", "columnTypes_" + columnIndex);
+      columnTypeLabel.textContent = "Column Type:";
+      newColumnDiv.appendChild(columnTypeLabel);
+
+      var columnTypeInput = document.createElement("input");
+      columnTypeInput.setAttribute("type", "text");
+      columnTypeInput.setAttribute("name", "columnTypes");
+      columnTypeInput.setAttribute("id", "columnTypes_" + columnIndex);
+      newColumnDiv.appendChild(columnTypeInput);
+
+      // Column Length Label and Input
+      var columnLengthLabel = document.createElement("label");
+      columnLengthLabel.setAttribute("for", "columnLengths_" + columnIndex);
+      columnLengthLabel.textContent = "Column Length:";
+      newColumnDiv.appendChild(columnLengthLabel);
+
+      var columnLengthInput = document.createElement("input");
+      columnLengthInput.setAttribute("type", "text");
+      columnLengthInput.setAttribute("name", "columnLengths");
+      columnLengthInput.setAttribute("id", "columnLengths_" + columnIndex);
+      newColumnDiv.appendChild(columnLengthInput);
+
+      // Delete Button
+      var deleteButton = document.createElement("button");
+      deleteButton.setAttribute("type", "button");
+      deleteButton.textContent = "Delete";
+      deleteButton.onclick = function () {
+        deleteColumn(newColumnDiv);  // 直接传入当前的div元素
+      };
+      newColumnDiv.appendChild(deleteButton);
+
+      // Append new column div
+      container.appendChild(newColumnDiv);
+
+      columnIndex++; // 每次添加列后递增索引
+    }
+
+    function deleteColumn(columnDiv) {
+      if (columnDiv) {
+        columnDiv.remove(); // 直接删除传入的div元素
+      }
+    }
+  </script>
+
+
+</head>
+<body>
+
+<h1>Edit Table</h1>
+
+<form th:action="@{/edit-table/{id}(id=${table.id})}" method="post">
+  <label for="tableName">Table Name:</label>
+  <input type="text" id="tableName" th:field="*{table.tableName}" />
+
+  <!-- 隐藏 importTime 和 updateTime 字段，它们将在后端处理 -->
+  <input type="hidden" th:field="*{table.importTime}" />
+  <input type="hidden" th:field="*{table.updateTime}" />
+
+  <h2>Columns</h2>
+  <div id="columnsContainer">
+    <div th:each="column, iterStat : ${columns}">
+      <div id="column_[[${iterStat.index}]]">
+        <label for="columnName_[[${iterStat.index}]]">Column Name:</label>
+        <input type="text" id="columnName_[[${iterStat.index}]]" name="columnNames" th:value="${column.columnName}" />
+
+        <label for="columnType_[[${iterStat.index}]]">Column Type:</label>
+        <input type="text" id="columnType_[[${iterStat.index}]]" name="columnTypes" th:value="${column.columnType}" />
+
+        <label for="columnLength_[[${iterStat.index}]]">Column Length:</label>
+        <input type="text" id="columnLength_[[${iterStat.index}]]" name="columnLengths" th:value="${column.columnLength}" />
+
+        <button type="button" th:attr="onclick='deleteColumn(this.parentElement)'">Delete</button> <!-- 传递当前的div元素 -->
+      </div>
+    </div>
+  </div>
+
+  <button type="button" onclick="addColumn()">Add Column</button>
+  <button type="submit">Save</button>
+</form>
+
+</body>
+</html>

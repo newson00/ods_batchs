@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Import Tables</title>
+    <script>
+        function uploadFile() {
+            const formData = new FormData();
+            formData.append("file", document.getElementById("file").files[0]);
+
+            fetch('/api/import/upload', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.text())
+                .then(data => {
+                    alert(data);
+                    location.reload();
+                }).catch(error => {
+                alert('Failed to upload file');
+            });
+        }
+
+        function showColumns(tableId) {
+            fetch(`/api/import/tables/${tableId}`)
+                .then(response => response.json())
+                .then(data => {
+                    let modalBody = document.getElementById("modalBody");
+                    modalBody.innerHTML = '';
+                    data.forEach(column => {
+                        modalBody.innerHTML += `<p>Column: ${column.columnName}, Type: ${column.columnType}, Length: ${column.columnLength}</p>`;
+                    });
+                    document.getElementById("columnsModal").style.display = "block";
+                });
+        }
+        function editTable(tableId) {
+            window.location.href = '/edit-table/' + tableId;
+        }
+        function deleteTable(tableId) {
+            if (confirm("Are you sure you want to delete this table?")) {
+                fetch('/api/import/tables/' + tableId, {
+                    method: 'DELETE'
+                }).then(response => {
+                    if (response.ok) {
+                        alert('Table deleted successfully');
+                        location.reload();  // Reload the page to reflect the changes
+                    } else {
+                        alert('Failed to delete table');
+                    }
+                }).catch(error => {
+                    alert('Error: ' + error);
+                });
+            }
+        }
+
+    </script>
+</head>
+<body>
+
+<h1>Import Table Data</h1>
+
+<div>
+    <input type="file" id="file"/>
+    <button onclick="uploadFile()">Upload</button>
+</div>
+
+<h2>Imported Tables</h2>
+<table border="1">
+    <thead>
+    <tr>
+        <th>Table Name</th>
+        <th>Import Time</th>
+        <th>Update Time</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- 使用 Thymeleaf 渲染导入的表数据 -->
+    <tr th:each="table : ${tables}">
+        <td th:text="${table.tableName}"></td>
+        <td th:text="${table.importTime}"></td>
+        <td th:text="${table.updateTime}"></td>
+        <td>
+            <button th:onclick="'showColumns(' + ${table.id} + ')'">View Columns</button>
+            <button th:onclick="'editTable(' + ${table.id} + ')'">Edit</button>
+            <button th:onclick="'deleteTable(' + ${table.id} + ')'">Delete</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Modal for viewing columns -->
+<div id="columnsModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+    // Add modal functionality here (open, close, etc.)
+</script>
+
+</body>
+</html>
