@@ -1,9 +1,12 @@
 package com.ls.ods_batchs.controller;
 
+import com.ls.ods_batchs.entity.Book;
+import com.ls.ods_batchs.entity.Cosntants;
 import com.ls.ods_batchs.entity.UrlBatch;
 import com.ls.ods_batchs.service.UrlBatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.redis.connection.stream.ObjectRecord;
 import org.springframework.data.redis.connection.stream.RecordId;
 import org.springframework.data.redis.connection.stream.StreamRecords;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -54,14 +57,16 @@ public class UrlBatchController {
         message.put("id", id1);
         message.put("fileUrl", fileUrl);
 
+        Book book = Book.create();
+
+
+        ObjectRecord<String, Book> taskStream = StreamRecords.newRecord()
+                .in(Cosntants.STREAM_KEY_001)  // 这里是 Stream 名称
+                .ofObject(book)
+                .withId(RecordId.autoGenerate());
 
         // 使用 Redis Stream 发布消息
-        RecordId recordId = redisTemplate.opsForStream().add(
-                StreamRecords.newRecord()
-                        .in("taskStream")  // 这里是 Stream 名称
-                        .ofMap(message)
-//                        .withId(RecordId.autoGenerate()) // 自动生成消息 ID
-        );
+        RecordId recordId = redisTemplate.opsForStream().add(taskStream);
 
         return ResponseEntity.ok("Task " + id1 + " published with record ID: " + recordId);
 

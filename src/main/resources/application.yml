@@ -11,7 +11,7 @@ spring:
     password: JsNx@1601  # 如果你的Redis集群需要密码访问
   #mysql
   datasource:
-    url: jdbc:mysql://localhost:3306/ods_datas?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/ods_datas?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: ods1
     password: 123456
 
