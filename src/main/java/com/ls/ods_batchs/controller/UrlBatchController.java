@@ -1,10 +1,10 @@
 package com.ls.ods_batchs.controller;
 
 import com.ls.ods_batchs.entity.Book;
-import com.ls.ods_batchs.entity.Cosntants;
 import com.ls.ods_batchs.entity.UrlBatch;
 import com.ls.ods_batchs.service.UrlBatchService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.redis.connection.stream.ObjectRecord;
 import org.springframework.data.redis.connection.stream.RecordId;
@@ -27,6 +27,12 @@ public class UrlBatchController {
     @Autowired
     private UrlBatchService urlBatchService;
 
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    @Value("${consumer.streamKey}")
+    private String streamKey;
+
     @GetMapping("/url-batches")
     public String getUrlBatches(Model model,
                                 @RequestParam(value = "page", defaultValue = "0") int page,
@@ -45,9 +51,6 @@ public class UrlBatchController {
         return "url_batches";
     }
 
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
-
     @PostMapping("/rerun-batch")
     public ResponseEntity<String> rerunBatch(@RequestBody Map<String, String> request) {
         String id1 = request.get("id1");
@@ -61,7 +64,7 @@ public class UrlBatchController {
 
 
         ObjectRecord<String, Book> taskStream = StreamRecords.newRecord()
-                .in(Cosntants.STREAM_KEY_001)  // 这里是 Stream 名称
+                .in(streamKey)  // 这里是 Stream 名称
                 .ofObject(book)
                 .withId(RecordId.autoGenerate());
 

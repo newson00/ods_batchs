@@ -11,6 +11,7 @@ import lombok.ToString;
 public class Book {
     private String title;
     private String author;
+    private int retryCount; // 添加重试计数
 
     public static Book create() {
         com.github.javafaker.Book fakerBook = Faker.instance().book();

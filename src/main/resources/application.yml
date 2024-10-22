@@ -35,5 +35,12 @@ spring:
 #          dialect: org.hibernate.dialect.Oracle12cDialect
 
 server:
-  port: 9001  # 配置Web端口
+  port: 9002  # 配置Web端口
 
+consumer:
+  streamKey: stream-001
+  streamGroup: taskGroup-001
+  name: consumer-1
+#  name: consumer-2
+#  name: consumer-3
+  maxRetryCount: 4
