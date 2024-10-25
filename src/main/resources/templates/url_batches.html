@@ -2,88 +2,103 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>URL Batches</title>
+    <link rel="stylesheet" th:href="@{/css/common_menu.css}" />
+    <link rel="stylesheet" th:href="@{/css/common_batches.css}" />
 </head>
 <body>
-<h1>URL Batches</h1>
 
-<form th:action="@{/url-batches}" method="get" id="searchForm">
-    <label for="id1">ID1:</label>
-    <input type="text" id="id1" name="id1" th:value="${id1}">
+<!-- 左侧全高菜单栏 -->
+<div class="sidebar">
+    <h2>Menu</h2>
+    <ul>
+        <li><a th:href="@{/url-batches}">Go to URL Batches</a></li>
+        <li><a th:href="@{/import/page}">Go to Import Page</a></li>
+    </ul>
+</div>
 
-    <label for="fileName">File Name:</label>
-    <input type="text" id="fileName" name="fileName" th:value="${fileName}">
+<!-- 右侧内容区域 -->
+<div class="content">
+    <h1>URL Batches</h1>
 
-    <label for="jyrq">Jyrq:</label>
-    <input type="text" id="jyrq" name="jyrq" th:value="${jyrq}">
+    <form th:action="@{/url-batches}" method="get" id="searchForm">
+        <label for="id1">ID1:</label>
+        <input type="text" id="id1" name="id1" th:value="${id1}">
 
-    <label for="status">Status:</label>
-    <input type="text" id="status" name="status" th:value="${status}">
+        <label for="fileName">File Name:</label>
+        <input type="text" id="fileName" name="fileName" th:value="${fileName}">
 
-    <!-- 隐藏的分页大小字段 -->
-    <input type="hidden" id="sizeInput" name="size" th:value="${size}">
+        <label for="jyrq">Jyrq:</label>
+        <input type="text" id="jyrq" name="jyrq" th:value="${jyrq}">
 
-    <button type="submit">Search</button>
-    <button type="button" onclick="resetForm()">Reset Search</button>
-</form>
+        <label for="status">Status:</label>
+        <input type="text" id="status" name="status" th:value="${status}">
 
-<table border="1">
-    <thead>
-    <tr>
-        <th>Id1</th>
-        <th>Key1</th>
-        <th>File URL</th>
-        <th>File Name</th>
-        <th>Jyrq</th>
-        <th>Insert Time</th>
-        <th>Update Time</th>
-        <th>Status</th>
-        <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="urlBatch : ${urlBatchPage.content}">
-        <td th:text="${urlBatch.id1}"></td>
-        <td th:text="${urlBatch.key1}"></td>
-        <td th:text="${urlBatch.fileUrl}"></td>
-        <td th:text="${urlBatch.fileName}"></td>
-        <td th:text="${urlBatch.jyrq}"></td>
-        <td th:text="${urlBatch.insertTime}"></td>
-        <td th:text="${urlBatch.updateTime}"></td>
+        <!-- 隐藏的分页大小字段 -->
+        <input type="hidden" id="sizeInput" name="size" th:value="${size}">
 
-        <!-- Status Column -->
-        <td>
-            <span th:switch="${urlBatch.status}">
-                <span th:case="0">未跑批</span>
-                <span th:case="1">正在跑批</span>
-                <span th:case="2">跑批完成</span>
-                <span th:case="*">未知状态</span>
-            </span>
-        </td>
+        <button type="submit">Search</button>
+        <button type="button" onclick="resetForm()">Reset Search</button>
+    </form>
 
-        <!-- Actions Column -->
-        <td>
-            <button type="button" onclick="rerunBatch('${urlBatch.id1}')">重跑批</button>
-        </td>
-    </tr>
-    </tbody>
-</table>
+    <table>
+        <thead>
+        <tr>
+            <th>Id1</th>
+            <th>Key1</th>
+            <th>File URL</th>
+            <th>File Name</th>
+            <th>Jyrq</th>
+            <th>Insert Time</th>
+            <th>Update Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="urlBatch : ${urlBatchPage.content}">
+            <td th:text="${urlBatch.id1}"></td>
+            <td th:text="${urlBatch.key1}"></td>
+            <td th:text="${urlBatch.fileUrl}"></td>
+            <td th:text="${urlBatch.fileName}"></td>
+            <td th:text="${urlBatch.jyrq}"></td>
+            <td th:text="${urlBatch.insertTime}"></td>
+            <td th:text="${urlBatch.updateTime}"></td>
 
-<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
-    <div>
-        <a th:href="@{/url-batches(page=${urlBatchPage.number - 1}, size=${size}, id1=${id1}, fileName=${fileName}, jyrq=${jyrq}, status=${status})}"
-           th:if="${urlBatchPage.hasPrevious()}">Previous</a>
-        <span>Page <span th:text="${urlBatchPage.number + 1}"></span> of <span th:text="${urlBatchPage.totalPages}"></span></span>
-        <a th:href="@{/url-batches(page=${urlBatchPage.number + 1}, size=${size}, id1=${id1}, fileName=${fileName}, jyrq=${jyrq}, status=${status})}"
-           th:if="${urlBatchPage.hasNext()}">Next</a>
-    </div>
+            <!-- Status Column -->
+            <td>
+                <span th:switch="${urlBatch.status}">
+                    <span th:case="0">未跑批</span>
+                    <span th:case="1">正在跑批</span>
+                    <span th:case="2">跑批完成</span>
+                    <span th:case="*">未知状态</span>
+                </span>
+            </td>
 
-    <div>
-        <label for="size">Page Size:</label>
-        <select id="size" name="size" onchange="updatePageSize(this.value)">
-            <option value="10" th:selected="${size == 10}">10</option>
-            <option value="20" th:selected="${size == 20}">20</option>
-            <option value="50" th:selected="${size == 50}">50</option>
-        </select>
+            <!-- Actions Column -->
+            <td>
+                <button type="button" onclick="rerunBatch('${urlBatch.id1}')">重跑批</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+        <div>
+            <a th:href="@{/url-batches(page=${urlBatchPage.number - 1}, size=${size}, id1=${id1}, fileName=${fileName}, jyrq=${jyrq}, status=${status})}"
+               th:if="${urlBatchPage.hasPrevious()}">Previous</a>
+            <span>Page <span th:text="${urlBatchPage.number + 1}"></span> of <span th:text="${urlBatchPage.totalPages}"></span></span>
+            <a th:href="@{/url-batches(page=${urlBatchPage.number + 1}, size=${size}, id1=${id1}, fileName=${fileName}, jyrq=${jyrq}, status=${status})}"
+               th:if="${urlBatchPage.hasNext()}">Next</a>
+        </div>
+
+        <div>
+            <label for="size">Page Size:</label>
+            <select id="size" name="size" onchange="updatePageSize(this.value)">
+                <option value="10" th:selected="${size == 10}">10</option>
+                <option value="20" th:selected="${size == 20}">20</option>
+                <option value="50" th:selected="${size == 50}">50</option>
+            </select>
+        </div>
     </div>
 </div>
 

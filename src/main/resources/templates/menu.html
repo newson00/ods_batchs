@@ -2,17 +2,24 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Function Selection Menu</title>
+    <link rel="stylesheet" th:href="@{/css/common_menu.css}" />
 </head>
 <body>
 
-<h1>Welcome to the Function Menu</h1>
+<!-- 左侧全高菜单栏 -->
+<div class="sidebar">
+    <h2>Menu</h2>
+    <ul>
+        <li><a th:href="@{/url-batches}">Go to URL Batches</a></li>
+        <li><a th:href="@{/import/page}">Go to Import Page</a></li>
+    </ul>
+</div>
 
-<p>Please select one of the following options:</p>
-
-<ul>
-    <li><a th:href="@{/url-batches}">Go to URL Batches</a></li>
-    <li><a th:href="@{/import/page}">Go to Import Page</a></li>
-</ul>
+<!-- 右侧内容区域 -->
+<div class="content">
+    <h1>Welcome to the Function Menu</h1>
+    <p>Please select one of the options from the left menu.</p>
+</div>
 
 </body>
 </html>

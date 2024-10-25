@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Edit Table</title>
+  <link rel="stylesheet" th:href="@{/css/common_menu.css}" />
+  <link rel="stylesheet" th:href="@{/css/common_edit.css}" />
   <script>
     let columnIndex = 1000; // 用于追踪添加的列索引
 
@@ -9,7 +11,8 @@
       var container = document.getElementById("columnsContainer");
 
       var newColumnDiv = document.createElement("div");
-      newColumnDiv.setAttribute("id", "column_" + columnIndex);  // 为每个列设置唯一的ID
+      newColumnDiv.setAttribute("id", "column_" + columnIndex);
+      newColumnDiv.className = "column"; // Add class for styling
 
       // Column Name Label and Input
       var columnNameLabel = document.createElement("label");
@@ -52,41 +55,49 @@
       deleteButton.setAttribute("type", "button");
       deleteButton.textContent = "Delete";
       deleteButton.onclick = function () {
-        deleteColumn(newColumnDiv);  // 直接传入当前的div元素
+        deleteColumn(newColumnDiv);
       };
       newColumnDiv.appendChild(deleteButton);
 
       // Append new column div
       container.appendChild(newColumnDiv);
 
-      columnIndex++; // 每次添加列后递增索引
+      columnIndex++; // Increment index after adding a column
     }
 
     function deleteColumn(columnDiv) {
       if (columnDiv) {
-        columnDiv.remove(); // 直接删除传入的div元素
+        columnDiv.remove(); // Remove the passed div element
       }
     }
   </script>
-
-
 </head>
 <body>
 
-<h1>Edit Table</h1>
+<!-- Left sidebar -->
+<div class="sidebar">
+  <h2>Menu</h2>
+  <ul>
+    <li><a th:href="@{/url-batches}">Go to URL Batches</a></li>
+    <li><a th:href="@{/import/page}">Go to Import Page</a></li>
+  </ul>
+</div>
 
-<form th:action="@{/edit-table/{id}(id=${table.id})}" method="post">
-  <label for="tableName">Table Name:</label>
-  <input type="text" id="tableName" th:field="*{table.tableName}" />
+<!-- Right content area -->
+<div class="content">
+  <h1>Edit Table</h1>
 
-  <!-- 隐藏 importTime 和 updateTime 字段，它们将在后端处理 -->
-  <input type="hidden" th:field="*{table.importTime}" />
-  <input type="hidden" th:field="*{table.updateTime}" />
+  <form th:action="@{/edit-table/{id}(id=${table.id})}" method="post">
+    <label for="tableName">Table Name:</label>
+    <input type="text" id="tableName" th:field="*{table.tableName}" />
 
-  <h2>Columns</h2>
-  <div id="columnsContainer">
-    <div th:each="column, iterStat : ${columns}">
-      <div id="column_[[${iterStat.index}]]">
+    <!-- Hidden fields for importTime and updateTime -->
+    <input type="hidden" th:field="*{table.importTime}" />
+    <input type="hidden" th:field="*{table.updateTime}" />
+
+    <h2>Columns</h2>
+    <div id="columnsContainer">
+      <div th:each="column, iterStat : ${columns}" class="column">
         <label for="columnName_[[${iterStat.index}]]">Column Name:</label>
         <input type="text" id="columnName_[[${iterStat.index}]]" name="columnNames" th:value="${column.columnName}" />
 
@@ -96,14 +107,14 @@
         <label for="columnLength_[[${iterStat.index}]]">Column Length:</label>
         <input type="text" id="columnLength_[[${iterStat.index}]]" name="columnLengths" th:value="${column.columnLength}" />
 
-        <button type="button" th:attr="onclick='deleteColumn(this.parentElement)'">Delete</button> <!-- 传递当前的div元素 -->
+        <button type="button" th:attr="onclick='deleteColumn(this.parentElement)'">Delete</button>
       </div>
     </div>
-  </div>
 
-  <button type="button" onclick="addColumn()">Add Column</button>
-  <button type="submit">Save</button>
-</form>
+    <button type="button" onclick="addColumn()">Add Column</button>
+    <button type="submit">Save</button>
+  </form>
+</div>
 
 </body>
 </html>
